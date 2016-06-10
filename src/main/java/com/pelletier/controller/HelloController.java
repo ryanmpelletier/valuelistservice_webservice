@@ -27,7 +27,6 @@ public class HelloController {
 
         for(Object key : request.getParameterMap().keySet()){
             String paramValue = ((String[])request.getParameterMap().get(key))[0];
-//            params.put((String)key,parameterConversionService.convertIfNeeded((String) key, paramValue));
             params.put((String)key,paramValue);
 
         }
