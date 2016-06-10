@@ -11,4 +11,44 @@
     <context:component-scan base-package="com.pelletier"/>
     <mvc:annotation-driven/>
 
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/valueslist?useSSL=false"/>
+        <property name="username" value="root"/>
+        <property name="password" value="test"/>
+    </bean>
+
+
+    <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
+        <constructor-arg ref="dataSource" /> <!-- class does not have setDataSource method... -->
+    </bean>
+
+    <bean id="pagingSupport" class="com.pelletier.valuelist.paging.MySQLPagingSupport"/>
+
+    <bean id="velocityQueryParameterMapper" class="com.pelletier.valuelist.transformer.VelocityQueryParameterMapper" />
+
+    <bean id="defaultJdbcRowMapper" class="org.springframework.jdbc.core.ColumnMapRowMapper"/>
+
+
+
+    <bean id="defaultJdbcDataAdapter" class="com.pelletier.valuelist.adapter.jdbc.DefaultJdbcDataAdapter">
+        <property name="sql">
+            <value>SELECT * FROM test #if($intField)WHERE intField = :intField#end</value>
+        </property>
+        <property name="queryParameterMapper" ref="velocityQueryParameterMapper" />
+        <property name="namedParameterJdbcTemplate" ref="namedParameterJdbcTemplate" />
+        <property name="pagingSupport" ref="pagingSupport"/>
+        <property name="rowMapper" ref="defaultJdbcRowMapper"/>
+    </bean>
+
+
+    <bean id="valueListService" class="com.pelletier.valuelist.DefaultValuesListService">
+        <property name="adapters">
+            <map>
+                <entry key="query" value-ref="defaultJdbcDataAdapter" />
+            </map>
+        </property>
+    </bean>
+
 </beans>
