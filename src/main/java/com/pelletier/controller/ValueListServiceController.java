@@ -16,7 +16,7 @@ import java.util.Map;
  * Created by Ryan Pelletier on 6/10/2016.
  */
 @RestController
-public class HelloController {
+public class ValueListServiceController {
 
     @Autowired
     ValueListService valueListService;
