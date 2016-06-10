@@ -28,7 +28,6 @@ public class ValueListServiceController {
         for(Object key : request.getParameterMap().keySet()){
             String paramValue = ((String[])request.getParameterMap().get(key))[0];
             params.put((String)key,paramValue);
-
         }
         PagingInfo pagingInfo = null;
 
@@ -38,7 +37,6 @@ public class ValueListServiceController {
             pagingInfo.setNumberPerPage(Integer.parseInt((String)params.get("numberPerPage")));
         }
 
-        //the valuesInfo I am returned should never be null
         return valueListService.getValuesList((String) params.get("valueListQuery"), params, pagingInfo);
     }
 }
