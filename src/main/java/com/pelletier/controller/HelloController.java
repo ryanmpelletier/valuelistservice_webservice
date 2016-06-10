@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by 578993 on 6/10/2016.
+ * Created by Ryan Pelletier on 6/10/2016.
  */
 @RestController
 public class HelloController {
