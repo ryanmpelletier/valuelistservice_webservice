@@ -14,7 +14,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://localhost:3306/valueslist?useSSL=false"/>
+        <property name="url" value="jdbc:mysql://localhost:3306/employees?useSSL=false"/>
         <property name="username" value="root"/>
         <property name="password" value="test"/>
     </bean>
@@ -30,16 +30,60 @@
 
     <bean id="defaultJdbcRowMapper" class="org.springframework.jdbc.core.ColumnMapRowMapper"/>
 
+    <bean id="parameterConversionService" class="com.pelletier.valuelist.util.ParameterConversionService">
+        <property name="converters">
+            <!-- parent list for converters -->
+            <bean id="globalConverterList" class="org.springframework.beans.factory.config.ListFactoryBean">
+                <property name="sourceList">
+                    <list>
+                        <ref bean="defaultStringToDateConverter"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
 
+        <property name="paramTypeMap">
+            <!-- parent map for paramType -->
+            <bean id="globalParamTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+                <property name="sourceMap">
+                    <map>
+                        <entry key="birth_date" value="java.util.Date" />
+                        <entry key="hire_date" value="java.util.Date" />
+                    </map>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="defaultStringToDateConverter" class="com.pelletier.valuelist.util.DefaultStringToDateConverter">
+        <property name="stringDateFormat" value="YYYY-MM-DD"/>
+    </bean>
 
     <bean id="defaultJdbcDataAdapter" class="com.pelletier.valuelist.adapter.jdbc.DefaultJdbcDataAdapter">
-        <property name="sql">
-            <value>SELECT * FROM test #if($intField)WHERE intField = :intField#end</value>
-        </property>
-        <property name="queryParameterMapper" ref="velocityQueryParameterMapper" />
-        <property name="namedParameterJdbcTemplate" ref="namedParameterJdbcTemplate" />
-        <property name="pagingSupport" ref="pagingSupport"/>
-        <property name="rowMapper" ref="defaultJdbcRowMapper"/>
+    <property name="sql">
+        <value>
+            SELECT
+            e.emp_no,
+            e.first_name,
+            e.last_name,
+            e.birth_date,
+            e.gender,
+            e.hire_date
+            FROM employees.employees e
+            WHERE true
+            #if($emp_no) AND e.emp_no = :emp_no #end
+            #if($first_name) AND first_name = :first_name #end
+            #if($last_name) AND last_name = :last_name #end
+            #if($birth_date) AND birth_date <![CDATA[ < ]]> :birth_date #end
+            #if($gender) AND gender = :gender #end
+            #if($hire_date) AND hire_date <![CDATA[ < ]]> :hire_date #end
+        </value>
+    </property>
+    <property name="queryParameterMapper" ref="velocityQueryParameterMapper" />
+    <property name="namedParameterJdbcTemplate" ref="namedParameterJdbcTemplate" />
+    <property name="pagingSupport" ref="pagingSupport"/>
+    <property name="rowMapper" ref="defaultJdbcRowMapper"/>
+        <property name="parameterConversionService" ref="parameterConversionService"/>
     </bean>
 
 
