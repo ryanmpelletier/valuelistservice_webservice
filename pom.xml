@@ -10,22 +10,24 @@
 
 
     <dependencies>
+        <!-- http://mvnrepository.com/artifact/org.springframework/spring-webmvc -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>4.1.4.RELEASE</version>
+            <version>3.2.4.RELEASE</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
-            <version>4.0.3.RELEASE</version>
+            <version>3.2.4.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-web</artifactId>
-            <version>4.0.3.RELEASE</version>
+            <version>3.2.4.RELEASE</version>
         </dependency>
 
         <!-- Servlet -->
@@ -39,7 +41,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jdbc</artifactId>
-            <version>4.2.4.RELEASE</version>
+            <version>3.2.4.RELEASE</version>
         </dependency>
 
         <!-- MySQL -->
@@ -68,6 +70,7 @@
             <version>2.2.3</version>
         </dependency>
 
+        <!--This is in my local maven repository, you will need to manually add the jar -->
         <dependency>
             <groupId>com.pelletier.valuelist</groupId>
             <artifactId>valuelistservice</artifactId>
@@ -80,6 +83,12 @@
             <groupId>org.apache.velocity</groupId>
             <artifactId>velocity</artifactId>
             <version>1.7</version>
+        </dependency>
+        <!-- http://mvnrepository.com/artifact/log4j/log4j -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
         </dependency>
 
     </dependencies>

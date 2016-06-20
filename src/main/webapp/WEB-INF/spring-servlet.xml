@@ -19,7 +19,6 @@
         <property name="password" value="test"/>
     </bean>
 
-
     <bean id="namedParameterJdbcTemplate" class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg ref="dataSource" /> <!-- class does not have setDataSource method... -->
     </bean>
@@ -28,12 +27,33 @@
 
     <bean id="velocityQueryParameterMapper" class="com.pelletier.valuelist.transformer.VelocityQueryParameterMapper" />
 
-    <bean id="defaultJdbcRowMapper" class="org.springframework.jdbc.core.ColumnMapRowMapper"/>
+    <!-- parent map for paramType -->
+    <bean id="globalParamTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+        <property name="sourceMap">
+            <map>
+                <entry key="hire_date" value="java.util.Date" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- String to Date Converter -->
+    <bean id="defaultStringToDateConverter" class="com.pelletier.valuelist.util.DefaultStringToDateConverter">
+        <property name="stringDateFormat" value="MM-DD-YYYY"/>
+    </bean>
+
+    <!-- parent list for converters -->
+    <bean id="globalConverterList" class="org.springframework.beans.factory.config.ListFactoryBean">
+        <property name="sourceList">
+            <list>
+                <ref bean="defaultStringToDateConverter"/>
+            </list>
+        </property>
+    </bean>
+
 
     <bean id="parameterConversionService" class="com.pelletier.valuelist.util.ParameterConversionService">
         <property name="converters">
-            <!-- parent list for converters -->
-            <bean id="globalConverterList" class="org.springframework.beans.factory.config.ListFactoryBean">
+            <bean  class="org.springframework.beans.factory.config.ListFactoryBean">
                 <property name="sourceList">
                     <list>
                         <ref bean="defaultStringToDateConverter"/>
@@ -43,48 +63,70 @@
         </property>
 
         <property name="paramTypeMap">
-            <!-- parent map for paramType -->
-            <bean id="globalParamTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+            <bean parent="globalParamTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+                <property name="targetMapClass">
+                    <value>java.util.HashMap</value>
+                </property>
                 <property name="sourceMap">
-                    <map>
-                        <entry key="birth_date" value="java.util.Date" />
-                        <entry key="hire_date" value="java.util.Date" />
+                    <map merge="true">
                     </map>
                 </property>
             </bean>
         </property>
     </bean>
 
-    <bean id="defaultStringToDateConverter" class="com.pelletier.valuelist.util.DefaultStringToDateConverter">
-        <property name="stringDateFormat" value="YYYY-MM-DD"/>
+    <bean id="parameterConversionService2" class="com.pelletier.valuelist.util.ParameterConversionService">
+        <property name="converters">
+            <bean  class="org.springframework.beans.factory.config.ListFactoryBean">
+                <property name="sourceList">
+                    <list>
+                        <ref bean="defaultStringToDateConverter"/>
+                    </list>
+                </property>
+            </bean>
+        </property>
+
+        <property name="paramTypeMap">
+            <bean parent="globalParamTypeMap" class="org.springframework.beans.factory.config.MapFactoryBean">
+                <property name="targetMapClass">
+                    <value>java.util.HashMap</value>
+                </property>
+                <property name="sourceMap">
+                    <map merge="true">
+                        <entry key="hire_date" value="java.lang.Integer"/>
+                    </map>
+                </property>
+            </bean>
+        </property>
     </bean>
 
     <bean id="defaultJdbcDataAdapter" class="com.pelletier.valuelist.adapter.jdbc.DefaultJdbcDataAdapter">
     <property name="sql">
         <value>
             SELECT
-            e.emp_no,
-            e.first_name,
-            e.last_name,
-            e.birth_date,
-            e.gender,
-            e.hire_date
-            FROM employees.employees e
+            emp_no,
+            first_name,
+            last_name,
+            birth_date,
+            gender,
+            hire_date
+            FROM employees.employees
             WHERE true
-            #if($emp_no) AND e.emp_no = :emp_no #end
+            #if($emp_no) AND emp_no = :emp_no #end
             #if($first_name) AND first_name = :first_name #end
             #if($last_name) AND last_name = :last_name #end
             #if($birth_date) AND birth_date <![CDATA[ < ]]> :birth_date #end
             #if($gender) AND gender = :gender #end
             #if($hire_date) AND hire_date <![CDATA[ < ]]> :hire_date #end
+            #if($sortByColumn &amp;&amp; $sortByOrder) order by $sortByColumn $sortByOrder#end
         </value>
     </property>
     <property name="queryParameterMapper" ref="velocityQueryParameterMapper" />
-    <property name="namedParameterJdbcTemplate" ref="namedParameterJdbcTemplate" />
+    <property name="dataSource" ref="dataSource" />
     <property name="pagingSupport" ref="pagingSupport"/>
-    <property name="rowMapper" ref="defaultJdbcRowMapper"/>
-        <property name="parameterConversionService" ref="parameterConversionService"/>
+    <property name="adapterConversionService" ref="parameterConversionService"/>
     </bean>
+
 
 
     <bean id="valueListService" class="com.pelletier.valuelist.DefaultValuesListService">
